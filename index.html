@@ -50,20 +50,181 @@
 
     <!-- Main Chat Window -->
     <main class="chat-area">
-      <!-- Chat Welcome / Empty State -->
+      <!-- Landing Page (shown until a chat is selected) -->
       <div class="chat-empty-state" id="chat-empty-state">
-        <div class="welcome-box">
-          <span class="welcome-icon">🔒</span>
-          <h2>Welcome to Core Connect</h2>
-          <p>A zero-knowledge metadata-resistant chat app with no user IDs or tracking.</p>
-          <div class="feature-bullets">
-            <div class="bullet"><strong>No Identifiers:</strong> You don't have a phone number, email, or global ID.</div>
-            <div class="bullet"><strong>Unidirectional Queues:</strong> Separate one-way server-side mailboxes for incoming and outgoing messages.</div>
-            <div class="bullet"><strong>E2EE Out of the Box:</strong> ECDH (P-256) handshake + AES-GCM (256-bit) encryption done in-browser.</div>
+
+        <!-- ── HERO ─────────────────────────────────── -->
+        <section class="lp-hero">
+          <div class="lp-hero-badge">
+            <span class="badge-dot"></span> End-to-End Encrypted · No Accounts · Open Source
           </div>
-          <button id="show-invite-btn-welcome" class="btn btn-primary">Create Connection Invitation</button>
-        </div>
+          <h1 class="lp-headline">Conversations<br><span class="lp-headline-accent">Without Identities.</span></h1>
+          <p class="lp-subheading">Private messaging without phone numbers, email addresses, usernames, or centralised accounts. Connect using encrypted invitation links and communicate through channels designed with privacy at the core.</p>
+          <div class="lp-cta-row">
+            <button id="show-invite-btn-welcome" class="btn btn-primary lp-cta-primary">Get Started →</button>
+            <a href="#lp-how" class="btn lp-cta-secondary">Learn How It Works</a>
+          </div>
+          <div class="lp-hero-grid-glow"></div>
+        </section>
+
+        <!-- ── WHY CORE CONNECT ──────────────────────── -->
+        <section class="lp-section lp-why">
+          <div class="lp-section-tag">Philosophy</div>
+          <h2 class="lp-section-title">Privacy by Design,<br>Not by Policy</h2>
+          <p class="lp-section-body">Core Connect removes the need for global identities. There are no accounts to register, no phone numbers to verify, and no central user directory. Every conversation begins with an encrypted invitation — allowing people to communicate directly without exposing unnecessary personal information to any server or service.</p>
+        </section>
+
+        <!-- ── FEATURE CARDS ─────────────────────────── -->
+        <section class="lp-section">
+          <div class="lp-section-tag">Features</div>
+          <h2 class="lp-section-title">Everything You Need.<br>Nothing You Don't.</h2>
+          <div class="lp-features-grid">
+
+            <div class="lp-card">
+              <div class="lp-card-icon" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">🚫</div>
+              <h3>No Accounts</h3>
+              <p>No phone numbers. No email addresses. No usernames. Just encrypted invitation links shared peer-to-peer.</p>
+            </div>
+
+            <div class="lp-card">
+              <div class="lp-card-icon" style="background:linear-gradient(135deg,#a855f7,#06b6d4)">🔒</div>
+              <h3>End-to-End Encrypted</h3>
+              <p>Messages are encrypted on your device before they leave it — using ECDH P-256 key exchange and AES-GCM 256-bit encryption built into modern browsers. The relay never sees plaintext.</p>
+            </div>
+
+            <div class="lp-card">
+              <div class="lp-card-icon" style="background:linear-gradient(135deg,#0891b2,#10b981)">🕵️</div>
+              <h3>Metadata Conscious</h3>
+              <p>Communication is routed through independent encrypted queues rather than tied to global user identities, minimising unnecessary metadata exposure by design.</p>
+            </div>
+
+            <div class="lp-card">
+              <div class="lp-card-icon" style="background:linear-gradient(135deg,#d97706,#ef4444)">🖥️</div>
+              <h3>Self-Host Friendly</h3>
+              <p>Run your own Core Connect relay on a personal computer, Raspberry Pi, VPS, or home server. No vendor lock-in. No subscriptions.</p>
+            </div>
+
+            <div class="lp-card">
+              <div class="lp-card-icon" style="background:linear-gradient(135deg,#059669,#3b82f6)">📖</div>
+              <h3>Open Source</h3>
+              <p>Built openly. Anyone can inspect the code, contribute improvements, or host their own infrastructure independently.</p>
+            </div>
+
+            <div class="lp-card">
+              <div class="lp-card-icon" style="background:linear-gradient(135deg,#be185d,#7c3aed)">⚡</div>
+              <h3>Browser-Native Crypto</h3>
+              <p>Powered entirely by the WebCrypto API — no native apps, no plugins, no external crypto libraries. Works on any modern device with a browser.</p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ── HOW IT WORKS ──────────────────────────── -->
+        <section class="lp-section" id="lp-how">
+          <div class="lp-section-tag">How It Works</div>
+          <h2 class="lp-section-title">Four Steps to a<br>Private Conversation</h2>
+          <div class="lp-timeline">
+            <div class="lp-step">
+              <div class="lp-step-num">01</div>
+              <div class="lp-step-body">
+                <h4>Create an Invitation</h4>
+                <p>Click "Get Started". An ephemeral ECDH key pair and a dedicated inbound queue are generated locally in your browser.</p>
+              </div>
+            </div>
+            <div class="lp-step-line"></div>
+            <div class="lp-step">
+              <div class="lp-step-num">02</div>
+              <div class="lp-step-body">
+                <h4>Share the Encrypted Invite</h4>
+                <p>Copy the generated invitation link and send it to your contact via any channel — email, another chat, or in person. The link encodes your public key and queue ID, nothing else.</p>
+              </div>
+            </div>
+            <div class="lp-step-line"></div>
+            <div class="lp-step">
+              <div class="lp-step-num">03</div>
+              <div class="lp-step-body">
+                <h4>Secure Key Exchange</h4>
+                <p>Your contact opens the link, generates their own key pair, and sends an encrypted handshake reply. Both sides derive the same AES-GCM session key — the server only routes ciphertext.</p>
+              </div>
+            </div>
+            <div class="lp-step-line"></div>
+            <div class="lp-step">
+              <div class="lp-step-num">04</div>
+              <div class="lp-step-body">
+                <h4>Start Chatting</h4>
+                <p>The connection is live. Every message is encrypted before it leaves your browser and decrypted only on your contact's device. The relay sees nothing but opaque bytes.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── COMPARISON TABLE ──────────────────────── -->
+        <section class="lp-section">
+          <div class="lp-section-tag">Comparison</div>
+          <h2 class="lp-section-title">How Does It Compare?</h2>
+          <p class="lp-section-body lp-comparison-note">Feature comparison based on observable, verifiable properties only.</p>
+          <div class="lp-table-wrapper">
+            <table class="lp-table">
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th class="col-cc">Core Connect</th>
+                  <th>Traditional Messaging</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Phone Number Required</td>
+                  <td class="col-cc"><span class="badge-no">✕ Never</span></td>
+                  <td><span class="badge-yes">✓ Usually</span></td>
+                </tr>
+                <tr>
+                  <td>Email Required</td>
+                  <td class="col-cc"><span class="badge-no">✕ Never</span></td>
+                  <td><span class="badge-warn">~ Often</span></td>
+                </tr>
+                <tr>
+                  <td>User Registration</td>
+                  <td class="col-cc"><span class="badge-no">✕ None</span></td>
+                  <td><span class="badge-yes">✓ Required</span></td>
+                </tr>
+                <tr>
+                  <td>End-to-End Encryption</td>
+                  <td class="col-cc"><span class="badge-good">✓ Always</span></td>
+                  <td><span class="badge-warn">~ Varies</span></td>
+                </tr>
+                <tr>
+                  <td>Self-Hostable Relay</td>
+                  <td class="col-cc"><span class="badge-good">✓ Yes</span></td>
+                  <td><span class="badge-warn">~ Rarely</span></td>
+                </tr>
+                <tr>
+                  <td>Open Source</td>
+                  <td class="col-cc"><span class="badge-good">✓ Yes</span></td>
+                  <td><span class="badge-warn">~ Varies</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ── BOTTOM CTA ─────────────────────────────── -->
+        <section class="lp-bottom-cta">
+          <div class="lp-bottom-cta-glow"></div>
+          <span class="lp-shield">🔐</span>
+          <h2>Ready for a private conversation?</h2>
+          <p>No sign-up. No tracking. No waiting. Your first encrypted channel is one click away.</p>
+          <button id="show-invite-btn-welcome-2" class="btn btn-primary lp-cta-primary" onclick="document.getElementById('show-add-conn-modal').click()">Create Your First Connection →</button>
+          <p class="lp-mission">Core Connect is an experimental, open-source messaging project exploring identity-free, privacy-first communication.</p>
+          <div class="lp-bottom-links">
+            <a href="https://github.com/dark232005/core-connect" target="_blank" rel="noopener">GitHub →</a>
+            <a href="#lp-how">How It Works →</a>
+            <a href="#lp-why" onclick="document.querySelector('.lp-why').scrollIntoView({behavior:'smooth'});return false;">Privacy Philosophy →</a>
+          </div>
+        </section>
+
       </div>
+
 
       <!-- Active Chat Interface -->
       <div class="chat-interface hidden" id="chat-interface">
