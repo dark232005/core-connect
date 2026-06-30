@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: core-connect
+    env: python
+    buildCommand: ""
+    startCommand: "python -u server.py"
+    plan: free

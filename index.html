@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Core Connect | Anonymous Private Chat</title>
+  <!-- Outfit Font from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Sidebar: Identity & Connections -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <span class="logo-icon">⚡</span>
+          <h1>Core Connect</h1>
+        </div>
+        <div class="subtitle">Inspired by SimpleX Protocol</div>
+      </div>
+
+      <!-- Identity Profile -->
+      <div class="profile-section card">
+        <h3>Local Identity</h3>
+        <div class="profile-input-group">
+          <input type="text" id="profile-name" placeholder="Enter your alias..." maxlength="15">
+          <button id="save-profile-btn" class="btn btn-primary">Set</button>
+        </div>
+        <div class="profile-info-text">
+          Saved in browser's localstorage. No server accounts.
+        </div>
+      </div>
+
+      <!-- Connections List -->
+      <div class="connections-section card">
+        <div class="section-title-row">
+          <h3>Connections</h3>
+          <button id="show-add-conn-modal" class="btn btn-sm btn-accent">+</button>
+        </div>
+        <div class="connections-list" id="connections-list">
+          <div class="empty-state">No secure connections yet. Add one to start.</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Chat Window -->
+    <main class="chat-area">
+      <!-- Chat Welcome / Empty State -->
+      <div class="chat-empty-state" id="chat-empty-state">
+        <div class="welcome-box">
+          <span class="welcome-icon">🔒</span>
+          <h2>Welcome to Core Connect</h2>
+          <p>A zero-knowledge metadata-resistant chat app with no user IDs or tracking.</p>
+          <div class="feature-bullets">
+            <div class="bullet"><strong>No Identifiers:</strong> You don't have a phone number, email, or global ID.</div>
+            <div class="bullet"><strong>Unidirectional Queues:</strong> Separate one-way server-side mailboxes for incoming and outgoing messages.</div>
+            <div class="bullet"><strong>E2EE Out of the Box:</strong> ECDH (P-256) handshake + AES-GCM (256-bit) encryption done in-browser.</div>
+          </div>
+          <button id="show-invite-btn-welcome" class="btn btn-primary">Create Connection Invitation</button>
+        </div>
+      </div>
+
+      <!-- Active Chat Interface -->
+      <div class="chat-interface hidden" id="chat-interface">
+        <header class="chat-header">
+          <button id="mobile-back-btn" class="mobile-only btn btn-sm btn-accent">&larr;</button>
+          <div class="contact-meta">
+            <div class="contact-avatar" id="chat-avatar">C</div>
+            <div>
+              <h2 id="chat-contact-name">Contact Name</h2>
+              <div class="connection-status-row">
+                <span class="status-indicator online"></span>
+                <span class="status-text" id="chat-connection-status">Queues Active</span>
+              </div>
+            </div>
+          </div>
+          <div class="crypto-badge">
+            <span class="shield-icon">🛡️</span> E2EE Secured
+          </div>
+        </header>
+
+        <!-- Message History -->
+        <div class="message-pane" id="message-pane">
+          <!-- Messages dynamically injected -->
+        </div>
+
+        <!-- Input Bar -->
+        <footer class="chat-footer">
+          <form id="message-form" class="message-form">
+            <input type="text" id="message-input" placeholder="Type a secure message..." autocomplete="off" required>
+            <button type="submit" class="btn btn-primary btn-send">Send</button>
+          </form>
+        </footer>
+      </div>
+    </main>
+
+    <!-- Queue & Metadata Visualizer -->
+    <section class="visualizer-pane">
+      <div class="visualizer-header">
+        <h3>Queue Flow & Metadata Visualizer</h3>
+        <p>Demonstrating zero-correlation routing</p>
+      </div>
+
+      <!-- Animated SVG Diagram of Queue Flow -->
+      <div class="diagram-card card">
+        <div class="diagram-container">
+          <svg id="visualizer-svg" viewBox="0 0 400 320" width="100%" height="100%">
+            <!-- Grid Lines Background -->
+            <defs>
+              <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1" />
+              </pattern>
+              <linearGradient id="aliceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#9333ea" />
+                <stop offset="100%" stop-color="#4f46e5" />
+              </linearGradient>
+              <linearGradient id="bobGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#06b6d4" />
+                <stop offset="100%" stop-color="#0891b2" />
+              </linearGradient>
+              <linearGradient id="serverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#1f2937" />
+                <stop offset="100%" stop-color="#111827" />
+              </linearGradient>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+
+            <!-- Connection Paths -->
+            <!-- Path A: Alice -> Queue 1 -> Bob -->
+            <path id="path-q1-send" d="M 60,110 L 160,110" fill="none" stroke="rgba(147, 51, 234, 0.2)" stroke-dasharray="4" stroke-width="2" />
+            <path id="path-q1-recv" d="M 240,110 L 340,110" fill="none" stroke="rgba(147, 51, 234, 0.2)" stroke-dasharray="4" stroke-width="2" />
+            <!-- Path B: Bob -> Queue 2 -> Alice -->
+            <path id="path-q2-send" d="M 340,210 L 240,210" fill="none" stroke="rgba(6, 182, 212, 0.2)" stroke-dasharray="4" stroke-width="2" />
+            <path id="path-q2-recv" d="M 160,210 L 60,210" fill="none" stroke="rgba(6, 182, 212, 0.2)" stroke-dasharray="4" stroke-width="2" />
+
+            <!-- User Nodes -->
+            <!-- Alice Node -->
+            <g transform="translate(60, 160)">
+              <circle r="30" fill="url(#aliceGrad)" stroke="#a855f7" stroke-width="2" />
+              <text text-anchor="middle" dy="5" fill="#fff" font-weight="600" font-size="12">Alice</text>
+            </g>
+            <!-- Bob Node -->
+            <g transform="translate(340, 160)">
+              <circle r="30" fill="url(#bobGrad)" stroke="#22d3ee" stroke-width="2" />
+              <text text-anchor="middle" dy="5" fill="#fff" font-weight="600" font-size="12" id="viz-contact-name">Bob</text>
+            </g>
+
+            <!-- Relay Server Node -->
+            <g transform="translate(200, 160)">
+              <rect x="-40" y="-80" width="80" height="160" rx="10" fill="url(#serverGrad)" stroke="#4b5563" stroke-width="1.5" />
+              <text text-anchor="middle" y="-60" fill="#9ca3af" font-size="10" font-weight="bold">RELAY SERVER</text>
+              
+              <!-- Queue 1 Box -->
+              <g transform="translate(0, -25)">
+                <rect x="-30" y="-15" width="60" height="30" rx="4" fill="#1e1b4b" stroke="#4f46e5" stroke-width="1" />
+                <text text-anchor="middle" y="4" fill="#a5b4fc" font-family="Space Mono" font-size="8" id="viz-q1-id">Q1: None</text>
+              </g>
+
+              <!-- Queue 2 Box -->
+              <g transform="translate(0, 35)">
+                <rect x="-30" y="-15" width="60" height="30" rx="4" fill="#062f4f" stroke="#0891b2" stroke-width="1" />
+                <text text-anchor="middle" y="4" fill="#67e8f9" font-family="Space Mono" font-size="8" id="viz-q2-id">Q2: None</text>
+              </g>
+            </g>
+
+            <!-- Animated Packets (Hidden by default) -->
+            <circle id="packet-q1" r="5" fill="#c084fc" opacity="0" />
+            <circle id="packet-q2" r="5" fill="#22d3ee" opacity="0" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Security / Crypto Specs Pane -->
+      <div class="crypto-details card">
+        <h4>E2EE & Routing Details</h4>
+        <div class="crypto-meta-table">
+          <div class="row">
+            <span class="label">Shared AES Key:</span>
+            <span class="val monospace" id="viz-shared-key">None (No Active Chat)</span>
+          </div>
+          <div class="row">
+            <span class="label">Outbound Queue ID:</span>
+            <span class="val monospace" id="viz-out-queue">None</span>
+          </div>
+          <div class="row">
+            <span class="label">Inbound Queue ID:</span>
+            <span class="val monospace" id="viz-in-queue">None</span>
+          </div>
+          <div class="row">
+            <span class="label">Server Link Correlation:</span>
+            <span class="val security-ok" id="viz-link-correlation">Zero Knowledge (Server cannot link Q1 & Q2)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Server Logs Stream Console representation -->
+      <div class="console-card card">
+        <div class="console-header">
+          <h4>Server logs (What the relay sees)</h4>
+          <span class="pulse-dot"></span>
+        </div>
+        <div class="console-body" id="console-logs">
+          <div class="console-line system">[Server Init] Zero-knowledge router initialized on port 8000.</div>
+          <div class="console-line system">[Server Config] Listening for unidirectional streams...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav mobile-only">
+      <button class="nav-tab active" data-target="chats">
+        <span class="nav-icon">💬</span>
+        <span class="nav-label">Chats</span>
+      </button>
+      <button class="nav-tab" data-target="connections">
+        <span class="nav-icon">👥</span>
+        <span class="nav-label">Contacts</span>
+      </button>
+      <button class="nav-tab" data-target="identity">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">Profile</span>
+      </button>
+      <button class="nav-tab" data-target="diagnostics">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-label">Settings</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Connection / Invitation Modal -->
+  <div class="modal-overlay hidden" id="connection-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Establish Secure Connection</h2>
+        <button id="close-modal-btn" class="modal-close-btn">&times;</button>
+      </div>
+      
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="create-invite">Create Invitation</button>
+        <button class="tab-btn" data-tab="accept-invite">Accept Invitation</button>
+      </div>
+
+      <div class="tab-content" id="tab-create-invite">
+        <p class="tab-description">Generate an invitation link. Send it to a friend. When they accept, you will establish bidirectional secure queues.</p>
+        <button id="generate-invite-btn" class="btn btn-primary btn-block">Generate Invitation Link</button>
+        
+        <div class="invite-result-box hidden" id="invite-result-box">
+          <label>Your Invitation URL (Copy and send to contact):</label>
+          <div class="copy-input-row">
+            <input type="text" id="invite-link-input" readonly>
+            <button id="copy-invite-btn" class="btn btn-accent">Copy</button>
+          </div>
+          <div class="spinner-row">
+            <span class="spinner"></span>
+            <span class="spinner-text">Waiting for contact to accept & handshake...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content hidden" id="tab-accept-invite">
+        <p class="tab-description">Paste your friend's invitation link here to complete the handshake and set up your communication queues.</p>
+        <div class="accept-input-group">
+          <label>Invitation Link / Code:</label>
+          <textarea id="accept-link-input" placeholder="Paste invitation link here..." rows="3"></textarea>
+        </div>
+        <div class="accept-input-group">
+          <label>Save contact as (local nickname):</label>
+          <input type="text" id="accept-contact-name" placeholder="E.g., Bob, Alice">
+        </div>
+        <button id="connect-btn" class="btn btn-primary btn-block">Establish Connection</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WebCrypto check alert -->
+  <div id="crypto-warning" class="warning-banner hidden">
+    ⚠️ Cryptographic operations require HTTPS or localhost. If you are accessing this page over a public IP without SSL, encryption features will fail.
+  </div>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>
