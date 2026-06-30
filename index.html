@@ -53,10 +53,19 @@
       <!-- Landing Page (shown until a chat is selected) -->
       <div class="chat-empty-state" id="chat-empty-state">
 
+        <!-- ── MOBILE HEADER ──────────────────────────── -->
+        <div class="lp-mobile-header mobile-only">
+          <div class="logo">
+            <span class="logo-icon">⚡</span>
+            <h2>Core Connect</h2>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="document.getElementById('show-add-conn-modal').click()">Get Started</button>
+        </div>
+
         <!-- ── HERO ─────────────────────────────────── -->
         <section class="lp-hero">
           <div class="lp-hero-badge">
-            <span class="badge-dot"></span> End-to-End Encrypted · No Accounts · Open Source
+            <span class="badge-dot"></span> End-to-End Encrypted · No Accounts · Zero Registration
           </div>
           <h1 class="lp-headline">Conversations<br><span class="lp-headline-accent">Without Identities.</span></h1>
           <p class="lp-subheading">Private messaging without phone numbers, email addresses, usernames, or centralised accounts. Connect using encrypted invitation links and communicate through channels designed with privacy at the core.</p>
@@ -102,12 +111,6 @@
               <div class="lp-card-icon" style="background:linear-gradient(135deg,#d97706,#ef4444)">🖥️</div>
               <h3>Self-Host Friendly</h3>
               <p>Run your own Core Connect relay on a personal computer, Raspberry Pi, VPS, or home server. No vendor lock-in. No subscriptions.</p>
-            </div>
-
-            <div class="lp-card">
-              <div class="lp-card-icon" style="background:linear-gradient(135deg,#059669,#3b82f6)">📖</div>
-              <h3>Open Source</h3>
-              <p>Built openly. Anyone can inspect the code, contribute improvements, or host their own infrastructure independently.</p>
             </div>
 
             <div class="lp-card">
@@ -197,11 +200,6 @@
                   <td>Self-Hostable Relay</td>
                   <td class="col-cc"><span class="badge-good">✓ Yes</span></td>
                   <td><span class="badge-warn">~ Rarely</span></td>
-                </tr>
-                <tr>
-                  <td>Open Source</td>
-                  <td class="col-cc"><span class="badge-good">✓ Yes</span></td>
-                  <td><span class="badge-warn">~ Varies</span></td>
                 </tr>
               </tbody>
             </table>

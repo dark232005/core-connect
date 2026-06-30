@@ -84,7 +84,10 @@ body {
   border-color: rgba(255, 255, 255, 0.08);
 }
 
-/* Scrollbar styling */
+/* Scrollbar styling – using scrollbar-gutter to prevent layout shift on Windows */
+* {
+  scrollbar-gutter: stable;
+}
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -1591,6 +1594,31 @@ path {
   color: var(--color-primary);
 }
 
+.lp-mobile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: rgba(10, 14, 23, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  width: 100%;
+}
+
+.lp-mobile-header .logo h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 /* ── LANDING PAGE RESPONSIVE ── */
 @media (max-width: 768px) {
   .lp-hero, .lp-section, .lp-bottom-cta {
@@ -1598,7 +1626,7 @@ path {
     padding-right: 20px;
   }
 
-  .lp-hero { padding-top: 48px; }
+  .lp-hero { padding-top: 32px; } /* Reduced top padding on mobile since header takes space */
 
   .lp-features-grid {
     grid-template-columns: 1fr;
