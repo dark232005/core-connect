@@ -1,4 +1,4 @@
-// Core Connect Client Application Logic
+// ZeroLink Client Application Logic
 
 // ==========================================
 // 1. STATE MANAGEMENT
@@ -271,7 +271,7 @@ async function generateInvitation() {
       senderName: state.profile.name
     };
 
-    const inviteString = 'coreconnect://invite/' + window.btoa(JSON.stringify(inviteData));
+    const inviteString = 'zerolink://invite/' + window.btoa(JSON.stringify(inviteData));
     DOM.inviteLinkInput.value = inviteString;
     DOM.inviteResultBox.classList.remove('hidden');
 
@@ -361,7 +361,7 @@ function subscribeToHandshakeQueue(queueId, aliceKeyPair) {
 // Bob accepts Alice's invitation
 async function acceptInvitation(inviteUrl, contactAlias) {
   try {
-    const rawInvite = inviteUrl.replace('coreconnect://invite/', '');
+    const rawInvite = inviteUrl.replace('zerolink://invite/', '');
     const inviteData = JSON.parse(window.atob(rawInvite));
     
     addConsoleLog(`Accepting invitation from ${inviteData.senderName}...`, "system");
