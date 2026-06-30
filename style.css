@@ -1064,4 +1064,121 @@ path {
     overflow-y: auto;
     padding: 16px;
   }
+
+  /* Footer on mobile: hide above bottom nav */
+  .app-footer {
+    margin-bottom: 60px;
+  }
+}
+
+/* ========================================= */
+/* 🏷️  FOOTER                                 */
+/* ========================================= */
+
+.app-footer {
+  width: 100%;
+  background: linear-gradient(90deg, rgba(15,21,36,0.98), rgba(20,28,47,0.98));
+  border-top: 1px solid rgba(168,85,247,0.15);
+  padding: 14px 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1400px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.footer-logo {
+  font-size: 18px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.footer-brand strong {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.footer-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 14px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: 0.3px;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 12px rgba(168,85,247,0.3);
+}
+
+.footer-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(168,85,247,0.5);
+  filter: brightness(1.1);
+}
+
+.footer-dev {
+  display: flex;
+  align-items: center;
+}
+
+.footer-insta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 12px;
+  text-decoration: none;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: all 0.2s ease;
+}
+
+.footer-insta:hover {
+  color: #fff;
+  border-color: rgba(225,48,108,0.5);
+  background: linear-gradient(135deg, rgba(131,58,180,0.15), rgba(225,48,108,0.15));
+  box-shadow: 0 0 16px rgba(225,48,108,0.2);
+}
+
+.footer-insta svg {
+  flex-shrink: 0;
+  color: #e1306c;
+}
+
+.footer-insta:hover svg {
+  filter: drop-shadow(0 0 4px rgba(225,48,108,0.8));
+}
+
+.insta-handle {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.footer-insta:hover .insta-handle {
+  color: #e1306c;
 }

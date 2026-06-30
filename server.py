@@ -5,6 +5,7 @@ import json
 import uuid
 import queue
 import threading
+from urllib.parse import urlparse
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from socketserver import ThreadingMixIn
 
@@ -84,9 +85,12 @@ class CoreConnectRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
+        parsed_url = urlparse(self.path)
+        path = parsed_url.path
+
         # 1. Server-Sent Events (SSE) subscriber endpoint
-        if self.path.startswith('/api/queue/events/'):
-            queue_id = self.path[len('/api/queue/events/'):].split('?')[0]
+        if path.startswith('/api/queue/events/'):
+            queue_id = path[len('/api/queue/events/'):]
             
             self.send_response(200)
             self.send_header('Content-Type', 'text/event-stream')
@@ -137,8 +141,9 @@ class CoreConnectRequestHandler(BaseHTTPRequestHandler):
                 print(f"[SSE Disconnect] Client unsubscribed from Queue: {queue_id}")
             return
 
+            return
+
         # 2. Static files fallback serving
-        path = self.path.split('?')[0]
         if path == '/':
             path = '/index.html'
 

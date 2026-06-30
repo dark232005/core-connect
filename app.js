@@ -233,8 +233,8 @@ async function createQueue() {
   }
 }
 
-async function sendMessageToQueue(queueId, payload) {
-  const res = await fetch(`${API_BASE}/api/queue/send`, {
+async function sendMessageToQueue(queueId, payload, serverUrl = API_BASE) {
+  const res = await fetch(`${serverUrl}/api/queue/send`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ queueId, payload })
@@ -311,16 +311,17 @@ function subscribeToHandshakeQueue(queueId, aliceKeyPair) {
         const sharedKeyHex = await CryptoHelper.exportAESKeyToHex(sharedKey);
 
         // Decrypt Bob's details
-        const decryptedStr = await CryptoHelper.decrypt(data.encryptedPayload, sharedKey);
-        const decryptedDetails = JSON.parse(decryptedStr);
-        
-        // Bob's details: { queueId: 'bob_inbound', name: 'Bob' }
+        const decryptedPayload = await CryptoHelper.decrypt(data.encryptedPayload, sharedKey);
+        const bobDetails = JSON.parse(decryptedPayload);
+
+        // Save connection
         const contactId = uuid();
         const connection = {
           id: contactId,
-          name: decryptedDetails.name,
-          inQueue: queueId, // Alice receives from here
-          outQueue: decryptedDetails.queueId, // Alice sends here
+          name: bobDetails.name || "Contact",
+          inQueue: queueId,       // Alice receives here (Alice's server)
+          outQueue: bobDetails.queueId,  // Alice sends here (Bob's server)
+          outServer: bobDetails.server || API_BASE, // Bob's server URL
           sharedKeyHex: sharedKeyHex
         };
 
@@ -337,7 +338,7 @@ function subscribeToHandshakeQueue(queueId, aliceKeyPair) {
         // Send confirmation handshake reply to Bob's inbound queue
         const confirmation = { handshakeConfirm: true, name: state.profile.name };
         const encConfirmation = await CryptoHelper.encrypt(JSON.stringify(confirmation), sharedKey);
-        await sendMessageToQueue(connection.outQueue, encConfirmation);
+        await sendMessageToQueue(connection.outQueue, encConfirmation, connection.outServer);
 
         // Ack & Clean message on server
         await acknowledgeMessage(queueId, message.id);
@@ -379,7 +380,11 @@ async function acceptInvitation(inviteUrl, contactAlias) {
     const sharedKeyHex = await CryptoHelper.exportAESKeyToHex(sharedKey);
 
     // 4. Encrypt Bob's details for Alice
-    const myDetails = { queueId: bobInboundQueue, name: state.profile.name };
+    const myDetails = { 
+      queueId: bobInboundQueue, 
+      server: API_BASE, // Share Bob's server URL with Alice
+      name: state.profile.name 
+    };
     const encDetails = await CryptoHelper.encrypt(JSON.stringify(myDetails), sharedKey);
 
     // 5. Send handshake response to Alice's inbound queue
@@ -388,16 +393,17 @@ async function acceptInvitation(inviteUrl, contactAlias) {
       encryptedPayload: encDetails
     };
 
-    addConsoleLog("Sending handshake reply to contact's invite queue...", "out");
-    await sendMessageToQueue(inviteData.queueId, JSON.stringify(handshakeResponse));
+    addConsoleLog(`Sending handshake reply to contact's invite queue on ${inviteData.server}...`, "out");
+    await sendMessageToQueue(inviteData.queueId, JSON.stringify(handshakeResponse), inviteData.server);
 
     // 6. Save connection
     const contactId = uuid();
     const connection = {
       id: contactId,
       name: contactAlias || inviteData.senderName || "Contact",
-      inQueue: bobInboundQueue,      // Bob receives here
-      outQueue: inviteData.queueId,  // Bob sends here
+      inQueue: bobInboundQueue,      // Bob receives here (Bob's server)
+      outQueue: inviteData.queueId,  // Bob sends here (Alice's server)
+      outServer: inviteData.server,  // Alice's server URL
       sharedKeyHex: sharedKeyHex
     };
 
@@ -522,8 +528,8 @@ async function sendMessage(text) {
 
   addConsoleLog(`Pushing payload to Queue: ${conn.outQueue.slice(0,8)}...`, "out");
   triggerPacketAnimation('packet-q1'); // Send path animation
-
-  const result = await sendMessageToQueue(conn.outQueue, encryptedPayload);
+  addConsoleLog(`Encrypting and sending message to ${conn.name}...`, "out");
+  const result = await sendMessageToQueue(conn.outQueue, encryptedPayload, conn.outServer);
   
   if (result.success) {
     if (!state.messages[contactId]) {
